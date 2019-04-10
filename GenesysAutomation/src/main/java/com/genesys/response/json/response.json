@@ -1,0 +1,24 @@
+{
+    "responseId": "f363de54-fb9a-43a3-a358-bca15d0022c3",
+    "queryResult": {
+        "queryText": "hi",
+        "parameters": {},
+        "allRequiredParamsPresent": true,
+        "fulfillmentText": "Hello, how can I help you?",
+        "fulfillmentMessages": [
+            {
+                "text": {
+                    "text": [
+                        "Hello, how can I help you?"
+                    ]
+                }
+            }
+        ],
+        "intent": {
+            "name": "projects/kate-experience-19/agent/intents/01682a9c-ab70-44dd-87b1-75c104d29b43",
+            "displayName": "Welcome"
+        },
+        "intentDetectionConfidence": 1,
+        "languageCode": "en"
+    }
+}
