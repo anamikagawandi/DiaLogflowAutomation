@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 public class QueryResult {
 
 private String queryText;
@@ -14,6 +16,9 @@ private boolean allRequiredParamsPresent;
 private String fulfillmentText;
 private List<FulfillmentMessage> fulfillmentMessages = new ArrayList<FulfillmentMessage>();
 private Intent intent;
+
+
+private DiagnosticInfo diagnosticInfo;
 private int intentDetectionConfidence;
 private String languageCode;
 
@@ -82,10 +87,7 @@ public void setIntent(Intent intent) {
 this.intent = intent;
 }
 
-public QueryResult withIntent(Intent intent) {
-this.intent = intent;
-return this;
-}
+
 
 public int getIntentDetectionConfidence() {
 return intentDetectionConfidence;
@@ -105,5 +107,14 @@ public void setLanguageCode(String languageCode) {
 this.languageCode = languageCode;
 }
 
+@JsonIgnoreProperties
+public DiagnosticInfo getDiagnosticInfo() {
+return diagnosticInfo;
+}
+
+@JsonIgnoreProperties
+public void setDiagnosticInfo(DiagnosticInfo diagnosticInfo) {
+this.diagnosticInfo = diagnosticInfo;
+}
 
 }

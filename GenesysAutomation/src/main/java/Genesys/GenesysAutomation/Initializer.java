@@ -12,7 +12,7 @@ public class Initializer {
 	
 	//public static WebDriver driver;
 	public static Properties prop;
-	public static Logger logger;
+//	public static Logger logger;
 	
 	public int RESPONSE_STATUS_CODE_200 = 200;
 	public int RESPONSE_STATUS_CODE_500 = 500;
@@ -23,19 +23,18 @@ public class Initializer {
 
 	public Initializer()
 	{
-		logger = Logger.getLogger(this.getClass());
+		//logger = Logger.getLogger(this.getClass());
 		try {
 			prop = new Properties();
-			FileInputStream ip = new FileInputStream(".\\prop\\config.properties");
+			FileInputStream ip = new FileInputStream("./prop/config.properties");
 			//FileInputStream ip = new FileInputStream("D:\\Selenium\\MagentoRepo\\src\\main\\java\\com\\magento\\qa\\config\\config.properties");//"D:\\SeleniumWorkspace\\MagentoCRM\\src\\main\\java\\com\\magento\\qa\\config\\config.properties");
 			prop.load(ip);
-			logger.info("Loading Config file");
+		//	logger.info("Loading Config file");
 			
 		}catch(FileNotFoundException e)
 		{
-			logger.error("Config file not found",e);
+		//	logger.error("Config file not found",e);
 		}catch(IOException e){
-			logger.error("IOException occurred",e);
 		}
 	}
 

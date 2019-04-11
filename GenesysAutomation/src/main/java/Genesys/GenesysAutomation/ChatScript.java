@@ -26,7 +26,7 @@ public class ChatScript {
 	RestClient restClient;
 	CloseableHttpResponse closebaleHttpResponse;
 	Initializer init;
-	Logger logger;
+	//Logger logger;
 	GenerateToken genTok;
 	RequestJson reqJson;
 	ResponseJson response;
@@ -35,10 +35,11 @@ public class ChatScript {
 		restClient=new RestClient();
 		init = new Initializer();
 		genTok= new GenerateToken();
-		logger = Logger.getLogger(this.getClass());
+		//logger = Logger.getLogger(this.getClass());
 	}
 	
-	public HashMap<String,String> runChatScript(String question)
+	
+	public String getResponseString(String question)
 	{
 		restClient = new RestClient();
 		HashMap<String, String> headerMap = new HashMap<String, String>();
@@ -74,7 +75,7 @@ public class ChatScript {
 		//validate response from API:
 		//1. status code:
 		int statusCode = closebaleHttpResponse.getStatusLine().getStatusCode();
-		logger.info(statusCode= init.RESPONSE_STATUS_CODE_201);
+		//logger.info(statusCode= init.RESPONSE_STATUS_CODE_201);
 		
 		//2. JsonString:
 		String responseString = null;
@@ -87,6 +88,18 @@ public class ChatScript {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
+		System.out.println(responseString);
+		
+		responseString.replace("\"webhook_latency_ms\"","\"webhookLatencyMs\"");
+		
+		return responseString;
+	}
+	
+	
+	
+	public ResponseJson runChatScript(String responseString)
+	{
 		
 		
 		ObjectMapper res = new ObjectMapper();
@@ -104,24 +117,23 @@ public class ChatScript {
 			e.printStackTrace();
 		}
 		
-		System.out.println(responseString.toString());
-		System.out.println(response.getQueryResult().getFulfillmentText());
+	
+		//HashMap<String,String> data = new HashMap<String, String>();
 		
-		
-		HashMap<String,String> data = new HashMap<String, String>();
-		
-		data.put("answer", response.getQueryResult().getFulfillmentText());
-		data.put("intent", response.getQueryResult().getIntent().getDisplayName());
-		data.put("entity", "null");
-		data.put("response_json", responseString.toString());
-		
-		return data;
+		//data.put("answer", response.getQueryResult().getFulfillmentText());
+		//data.put("intent", response.getQueryResult().getIntent().getDisplayName());
+		//data.put("entity", response.getQueryResult().getParameters().getEntity().toString());
+		//data.put("response_json", responseString.toString());
+			
+		return response;
 	}
 	
 
 	public static void main(String arg[])
 	{
 		ChatScript c=new ChatScript();
-		c.runChatScript("What's GCAP?");
+		
+		System.out.println(c.runChatScript(c.getResponseString("Is there a shuttle to the Westin?")).getQueryResult().getDiagnosticInfo().getWebhookLatencyMs());
+		
 	}
 }
