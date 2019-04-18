@@ -8,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -24,8 +25,15 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import com.aventstack.extentreports.AnalysisStrategy;
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+import com.aventstack.extentreports.reporter.ExtentHtmlReporter;
+import com.aventstack.extentreports.reporter.ExtentLoggerReporter;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.genesys.context.response.Parameters;
 import com.genesys.response.json.ResponseJson;
 
@@ -45,6 +53,10 @@ public class CompareResult {
 	CMS cms;
 	String[] df_json_response;
 	String cms_json_response;
+	ObjectMapper mapper;
+	ExtentReports extent; 
+	ExtentHtmlReporter reporter;
+	ExtentTest test;
 	
 	public CompareResult()
 	{
@@ -52,9 +64,17 @@ public class CompareResult {
 		init = new Initializer();
 		chat=new ChatScript();
 		cms=new CMS();
+		
+		mapper = new ObjectMapper();
+		
+		reporter = new ExtentHtmlReporter(init.prop.getProperty("reportPath"));
+		extent = new ExtentReports();
+		extent.attachReporter(reporter);
+		extent.setAnalysisStrategy(AnalysisStrategy.TEST);
+		reporter.loadXMLConfig(init.prop.getProperty("extentReportConfig"));
 	}
 
-	
+
 	public Workbook loadFile()
 	{
 		String file_extn=init.prop.getProperty("excel_path").substring(init.prop.getProperty("excel_path").lastIndexOf("."));
@@ -89,7 +109,7 @@ public class CompareResult {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 
 		/*if(file_extn.equalsIgnoreCase((".xlsx")))
 		{
@@ -112,27 +132,21 @@ public class CompareResult {
 			}
 			sheet = (HSSFSheet) wb.getSheetAt(0);
 		}
-*/
-		
+		 */
+
 		return wb;
-		
+
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
 	public void compareData()
 	{
 
 		loadFile();
 		sheet = wb.getSheetAt(0);
-		
+
 
 		int size=sheet.getLastRowNum();
 		int col=sheet.getRow(0).getLastCellNum();
@@ -145,7 +159,7 @@ public class CompareResult {
 			for(int i=1;i<=size;i++)
 			{
 
-				
+
 				//System.out.println("This is indent"+sheet.getRow(i).getCell(2).getStringCellValue());
 				sheet.getRow(i).getCell(5).setCellValue("");
 				sheet.getRow(i).getCell(6).setCellValue("");
@@ -157,190 +171,258 @@ public class CompareResult {
 				sheet.getRow(i).getCell(14).setCellValue("");
 				sheet.getRow(i).getCell(15).setCellValue("");
 				sheet.getRow(i).getCell(17).setCellValue("");
-				
-				
-				
-				
+
+
+
+
 				String question=sheet.getRow(i).getCell(1).getStringCellValue().trim();
-				double cms_id=sheet.getRow(i).getCell(10).getNumericCellValue();
+				
+			
+				
+				
+				String cms_id = "NA";
+				if(sheet.getRow(i).getCell(10).getNumericCellValue()>0)
+					cms_id=Integer.toString((int) sheet.getRow(i).getCell(10).getNumericCellValue()).trim();
+				System.out.println("CMS ID is :\t"+cms_id);
 				String cms_answer=null;
 				System.out.println(question);
-				
+
 				String ans="NA";
 				String intent="NA";
 				String sheet_intent="NA";
 				String sheet_entity_att="NA",sheet_entity_value="NA",entity_att="NA",entity_value="NA";
-				
+
 				String sheet_context="NA", df_context="NA";
 
 				if(question.isEmpty())
 					break;
+
+				test=extent.createTest(question);
 				
-				if(Double.toString(cms_id).isEmpty())
-					break;
+				
+				df_json_response=chat.getResponseString(question);
+				//System.out.println("This is th response"+  df_json_response );	
+				response_df=chat.runChatScript(df_json_response[1]);
 
-				try{
+				intent=response_df.getQueryResult().getIntent().getDisplayName().trim();
+				sheet_intent=sheet.getRow(i).getCell(2).getStringCellValue().trim();
 
-					df_json_response=chat.getResponseString(question);
-					//System.out.println("This is th response"+  df_json_response );	
-					response_df=chat.runChatScript(df_json_response[1]);
-					
-					
-					cms_json_response=cms.getCMSResponseString(Double.toString(cms_id));
-					
-					try {
-						cms_answer=cms.getCMSResponse(cms_json_response).getAnswer().trim();
-					} catch (Exception e) {
-						sheet.getRow(i).getCell(13).setCellValue(e.getMessage());
-					}
-	
-					
-					
-					if(!response_df.getQueryResult().getFulfillmentText().trim().isEmpty())
-					{
-						ans=response_df.getQueryResult().getFulfillmentText().trim();
-					}
-					
-					
-					
-					intent=response_df.getQueryResult().getIntent().getDisplayName().trim();
-					sheet_intent=sheet.getRow(i).getCell(2).getStringCellValue().trim();
-					
-					
-					
-					
-					
-					//to add values when sheet has entity values
-					if(!sheet.getRow(i).getCell(3).getStringCellValue().isEmpty())
-					{
-						sheet_entity_att=sheet.getRow(i).getCell(3).getStringCellValue().trim();
-						sheet_entity_value=sheet.getRow(i).getCell(4).getStringCellValue().trim();
-					}
-					
-					if(!sheet.getRow(i).getCell(16).getStringCellValue().isEmpty())
-					{
-						sheet_context=sheet.getRow(i).getCell(16).getStringCellValue().trim();
-						df_context=response_df.getQueryResult().getOutputContexts().get(0).getParameters().getEntity().trim();
-					}
-					
-					
-					//to add values of entities from df
-					if(!response_df.getQueryResult().getParameters().getWhat().trim().isEmpty())
-					{
-						entity_att="what";
-						entity_value=response_df.getQueryResult().getParameters().getWhat().trim();
-					}
-					else if(!response_df.getQueryResult().getParameters().getWhen().trim().isEmpty())
-					{
-						entity_att="when";
-						entity_value=response_df.getQueryResult().getParameters().getWhen().trim();
-					}
-					else if(!response_df.getQueryResult().getParameters().getWhere().trim().isEmpty())
-					{
-						entity_att="where";
-						entity_value=response_df.getQueryResult().getParameters().getWhere().trim();
-					}
-					else if(!response_df.getQueryResult().getParameters().getWho().trim().isEmpty())
-					{
-						entity_att="who";
-						entity_value=response_df.getQueryResult().getParameters().getWho().trim();
-					}
-					else if(!response_df.getQueryResult().getParameters().getItem().trim().isEmpty())
-					{
-						entity_att="item";
-						entity_value=response_df.getQueryResult().getParameters().getItem().trim();
-					}
-					else if(!response_df.getQueryResult().getParameters().getTopic().trim().isEmpty())
-					{
-						entity_att="topic";
-						entity_value=response_df.getQueryResult().getParameters().getTopic().trim();
-					}
-					
-    
-				    
-					try {
-					if(cms_answer.isEmpty())
-						cms_answer="blank answer from cms";
-					}
-					catch(Exception e)
-					{
-						cms_answer="error to fetch from cms";
-					}
 
-					if(ans.equalsIgnoreCase(cms_answer) &&
-							intent.equalsIgnoreCase(sheet_intent)
-							&& entity_att.equalsIgnoreCase(sheet_entity_att)  && 
-							entity_value.equalsIgnoreCase(sheet_entity_value) &&
-							df_context.equalsIgnoreCase(sheet_context) )
+
+
+				if(cms_id.trim().equalsIgnoreCase("NA"))
+				{
+					System.out.println("Inside CMS id null block");
+					ArrayList<String> default_ans=new ArrayList<String>();
+					default_ans.add("I didn't get that. Can you say it again?");
+					default_ans.add("I missed what you said. What was that?");
+					default_ans.add("Sorry, could you say that again?");
+					default_ans.add("Sorry, can you say that again?");
+					default_ans.add("Can you say that again?");
+					default_ans.add("Sorry, I didn't get that. Can you rephrase?");
+					default_ans.add("Sorry, what was that?");
+					default_ans.add("One more time?");
+					default_ans.add("What was that?");
+					default_ans.add("Say that one more time?");
+					default_ans.add("I didn't get that. Can you repeat?");
+
+
+
+					ans=response_df.getQueryResult().getFulfillmentText().trim();
+
+					if(default_ans.contains(ans) && intent.equalsIgnoreCase("Default Fallback Intent".trim()))
+					{
 						sheet.getRow(i).getCell(11).setCellValue("PASS");
+						test.log(Status.PASS,"");
+						test.pass("DF JSON:\n"+mapper.writeValueAsString(response_df));
+						
+					}
 					else
+					{
 						sheet.getRow(i).getCell(11).setCellValue("FAIL");
+						test.log(Status.FAIL,"");
+						test.fail("DF JSON:\n"+mapper.writeValueAsString(response_df));
+					}
+
+					
+					sheet.getRow(i).getCell(13).setCellValue("Default Fallback Intent");
+					sheet.getRow(i).getCell(2).setCellValue("Default Fallback Intent");
+					
+					System.out.println("Question asked:\t"+question);
+					System.out.println("Answer by DF :\t"+ans);
+					System.out.println("Intent expected:\t"+"Default Fallback Intent");
+					System.out.println("Intent actual:\t"+intent);
+
+				}
+				else {
+					System.out.println("Inside cms id block");
+					try{
+
+						cms_json_response=cms.getCMSResponseString(cms_id.trim());
+
+						try {
+							cms_answer=cms.getCMSResponse(cms_json_response).getAnswer().trim();
+						} catch (Exception e) {
+							sheet.getRow(i).getCell(13).setCellValue(e.getMessage());
+						}
 
 
-			}catch(Exception e)
-			{
-				sheet.getRow(i).getCell(11).setCellValue("Some error occured. Check Manually");
-				e.printStackTrace();
-			}
 
-				
+						if(!response_df.getQueryResult().getFulfillmentText().trim().isEmpty())
+						{
+							ans=response_df.getQueryResult().getFulfillmentText().trim();
+						}
+
+
+						//to add values when sheet has entity values
+						if(!sheet.getRow(i).getCell(3).getStringCellValue().isEmpty())
+						{
+							sheet_entity_att=sheet.getRow(i).getCell(3).getStringCellValue().trim();
+							sheet_entity_value=sheet.getRow(i).getCell(4).getStringCellValue().trim();
+						}
+
+						if(!sheet.getRow(i).getCell(16).getStringCellValue().isEmpty())
+						{
+							sheet_context=sheet.getRow(i).getCell(16).getStringCellValue().trim();
+							df_context=response_df.getQueryResult().getOutputContexts().get(0).getParameters().getEntity().trim();
+						}
+
+
+						//to add values of entities from df
+						if(!response_df.getQueryResult().getParameters().getWhat().trim().isEmpty())
+						{
+							entity_att="what";
+							entity_value=response_df.getQueryResult().getParameters().getWhat().trim();
+						}
+						else if(!response_df.getQueryResult().getParameters().getWhen().trim().isEmpty())
+						{
+							entity_att="when";
+							entity_value=response_df.getQueryResult().getParameters().getWhen().trim();
+						}
+						else if(!response_df.getQueryResult().getParameters().getWhere().trim().isEmpty())
+						{
+							entity_att="where";
+							entity_value=response_df.getQueryResult().getParameters().getWhere().trim();
+						}
+						else if(!response_df.getQueryResult().getParameters().getWho().trim().isEmpty())
+						{
+							entity_att="who";
+							entity_value=response_df.getQueryResult().getParameters().getWho().trim();
+						}
+						else if(!response_df.getQueryResult().getParameters().getItem().trim().isEmpty())
+						{
+							entity_att="item";
+							entity_value=response_df.getQueryResult().getParameters().getItem().trim();
+						}
+						else if(!response_df.getQueryResult().getParameters().getTopic().trim().isEmpty())
+						{
+							entity_att="topic";
+							entity_value=response_df.getQueryResult().getParameters().getTopic().trim();
+						}
+
+
+
+						try {
+							if(cms_answer.isEmpty())
+								cms_answer="blank answer from cms";
+						}
+						catch(Exception e)
+						{
+							cms_answer="error to fetch from cms";
+						}
+
+						if(ans.equalsIgnoreCase(cms_answer) &&
+								intent.equalsIgnoreCase(sheet_intent)
+								&& entity_att.equalsIgnoreCase(sheet_entity_att)  && 
+								entity_value.equalsIgnoreCase(sheet_entity_value) &&
+								df_context.equalsIgnoreCase(sheet_context) )
+						{
+							sheet.getRow(i).getCell(11).setCellValue("PASS");
+							test.log(Status.PASS, question);
+							test.pass("DF JSON:\n"+mapper.writeValueAsString(response_df));
+							test.pass("CMS JSON:\n"+mapper.writeValueAsString(cms_json_response));
+						}
+						else
+						{
+							sheet.getRow(i).getCell(11).setCellValue("FAIL");
+							test.log(Status.FAIL, question);
+							test.fail("DF JSON:\n"+mapper.writeValueAsString(response_df));
+							test.fail("CMS JSON:\n"+mapper.writeValueAsString(cms_json_response));
+						}
+							
+
+
+					}catch(Exception e)
+					{
+						sheet.getRow(i).getCell(11).setCellValue("Some error occured. Check Manually");
+						e.printStackTrace();
+					}
+					
+					
+					
+					System.out.println("Question asked:\t"+question);
+					System.out.println("Answer by DF :\t"+ans);
+					System.out.println("Answer by CMS :\t"+cms_answer);
+					System.out.println("Intent expected:\t"+sheet.getRow(i).getCell(2).getStringCellValue().trim());
+					System.out.println("Intent actual:\t"+intent);
+					System.out.println("Entity Att expected :\t"+sheet_entity_att);
+					System.out.println("Entity Att actual :\t"+entity_att);
+					System.out.println("Entity Value expected :\t"+sheet_entity_value);
+					System.out.println("Entity Value actual :\t"+entity_value);
+					System.out.println("Context Value expected :\t"+sheet_context);
+					System.out.println("Context Value actual :\t"+df_context);
+
+					sheet.getRow(i).getCell(13).setCellValue(cms_json_response);
+					
+					
+				}
+
 				sheet.getRow(i).getCell(5).setCellValue(cms_answer);
 				sheet.getRow(i).getCell(6).setCellValue(intent);
 				sheet.getRow(i).getCell(7).setCellValue(entity_att);
 				sheet.getRow(i).getCell(8).setCellValue(entity_value);
 				sheet.getRow(i).getCell(9).setCellValue(ans);
 				sheet.getRow(i).getCell(12).setCellValue(df_json_response[1]);
-				sheet.getRow(i).getCell(13).setCellValue(cms_json_response);
+				
 				sheet.getRow(i).getCell(2).setCellValue(sheet_intent.toString());
 				sheet.getRow(i).getCell(17).setCellValue(df_context);
-				
-				
+
+
 				Date date = Calendar.getInstance().getTime();  
-			    DateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");  
-			    
-			    String strDate = dateFormat.format(date);  
-				
-			    sheet.getRow(i).getCell(14).setCellValue(strDate);
-			    sheet.getRow(i).getCell(15).setCellValue(df_json_response[0]);
-				
-				
-				System.out.println("Question asked:\t"+question);
-				System.out.println("Answer by DF :\t"+ans);
-				System.out.println("Answer by CMS :\t"+cms_answer);
-				System.out.println("Intent expected:\t"+sheet.getRow(i).getCell(2).getStringCellValue().trim());
-				System.out.println("Intent actual:\t"+intent);
-				System.out.println("Entity Att expected :\t"+sheet_entity_att);
-				System.out.println("Entity Att actual :\t"+entity_att);
-				System.out.println("Entity Value expected :\t"+sheet_entity_value);
-				System.out.println("Entity Value actual :\t"+entity_value);
-				System.out.println("Context Value expected :\t"+sheet_context);
-				System.out.println("Context Value actual :\t"+df_context);
-				
-			//	}
+				DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd-hh:mm:ss");  
 
-		}
+				String strDate = dateFormat.format(date);  
 
-		try {
-		file.close();
-		outputStream = new FileOutputStream(file_name);
-		wb.write(outputStream);
-		
-		
-		System.out.println("Task Complete");
-		}
-		catch(Exception e)
+				sheet.getRow(i).getCell(14).setCellValue(strDate);
+				sheet.getRow(i).getCell(15).setCellValue(df_json_response[0]);
+
+
+				
+				//	}
+
+			}
+
+			try {
+				file.close();
+				outputStream = new FileOutputStream(file_name);
+				wb.write(outputStream);
+				extent.flush();
+
+				System.out.println("Task Complete");
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+			//driver.quit();
+
+		}catch(
+				Exception e)
 		{
 			e.printStackTrace();
 		}
-		//driver.quit();
 
-	}catch(
-			Exception e)
-	{
-		e.printStackTrace();
+
 	}
-
-
-}
 
 }
