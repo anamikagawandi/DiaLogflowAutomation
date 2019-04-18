@@ -2,6 +2,10 @@ package Genesys.GenesysAutomation;
 
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 
 import org.apache.http.ParseException;
@@ -38,8 +42,19 @@ public class ChatScript {
 		//logger = Logger.getLogger(this.getClass());
 	}
 	
+
+	public String changeSessionInApiUri(String url)
+	{
+		Date date = Calendar.getInstance().getTime();  
+	    DateFormat dateFormat = new SimpleDateFormat("yyyymmddhhmmss");  
+	    
+	    String strDate = dateFormat.format(date);  
+	    
+	    return url.replace("{id}",strDate);   
+	}
 	
-	public String getResponseString(String question)
+		
+	public String[] getResponseString(String question)
 	{
 		restClient = new RestClient();
 		HashMap<String, String> headerMap = new HashMap<String, String>();
@@ -60,10 +75,22 @@ public class ChatScript {
 			// TODO Auto-generated catch block
 			e2.printStackTrace();
 		}
-		System.out.println(reqJsonString);
+		//System.out.println(reqJsonString);
+		
+		
+		
+		String[] responseString = new String[2];
+		
+		String api_uri=init.prop.getProperty("api_uri");
+		
+		
+		api_uri=api_uri.replace("{id}","12345");
+		
+		//api_uri=changeSessionInApiUri(api_uri);
+		
 		
 		try {
-			closebaleHttpResponse = restClient.post(init.prop.getProperty("api_uri"), reqJsonString, headerMap);
+			closebaleHttpResponse = restClient.post(api_uri, reqJsonString, headerMap);
 		} catch (ClientProtocolException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -78,9 +105,11 @@ public class ChatScript {
 		//logger.info(statusCode= init.RESPONSE_STATUS_CODE_201);
 		
 		//2. JsonString:
-		String responseString = null;
+		
+		String responsestr=null;
+		
 		try {
-			responseString = EntityUtils.toString(closebaleHttpResponse.getEntity(), "UTF-8");
+			responsestr = EntityUtils.toString(closebaleHttpResponse.getEntity(), "UTF-8");
 		} catch (ParseException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -89,9 +118,24 @@ public class ChatScript {
 			e1.printStackTrace();
 		}
 		
-		System.out.println(responseString);
 		
-		responseString.replace("\"webhook_latency_ms\"","\"webhookLatencyMs\"");
+		responseString[0]=api_uri;
+		
+		responsestr=responsestr.replaceAll("webhook_latency_ms","webhookLatencyMs");
+		responsestr=responsestr.replaceAll("when.original","whenOriginal");
+		responsestr=responsestr.replaceAll("what.original","whatOriginal");
+		responsestr=responsestr.replaceAll("where.original","whereOriginal");
+		responsestr=responsestr.replaceAll("who.original","whoOriginal");
+		responsestr=responsestr.replaceAll("item.original","itemOriginal");
+		responsestr=responsestr.replaceAll("devcon.original","devconOriginal");
+		responsestr=responsestr.replaceAll("next.original","nextOriginal");
+		responsestr=responsestr.replaceAll("topic.original","topicOriginal");
+		
+		
+		responseString[1]=responsestr;
+	
+		
+		//System.out.println(responseString);
 		
 		return responseString;
 	}
@@ -128,12 +172,15 @@ public class ChatScript {
 		return response;
 	}
 	
-
+/*
 	public static void main(String arg[])
 	{
 		ChatScript c=new ChatScript();
 		
-		System.out.println(c.runChatScript(c.getResponseString("Is there a shuttle to the Westin?")).getQueryResult().getDiagnosticInfo().getWebhookLatencyMs());
+		//System.out.println(c.runChatScript(c.getResponseString("Is there a shuttle to the Westin?")).getQueryResult().getDiagnosticInfo().getWebhookLatencyMs());
+		ResponseJson response_df=c.runChatScript(c.getResponseString("When is the keynote speaker presenting?")[1]);
 		
+		System.out.println(response_df.getQueryResult().getOutputContexts().get(0).getParameters().getEntity());
 	}
+	*/
 }

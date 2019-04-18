@@ -1,26 +1,35 @@
 package com.genesys.response.json;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.genesys.context.response.OutputContext;
 
 public class QueryResult {
 
 private String queryText;
 private Parameters parameters;
-private String action;
-private boolean allRequiredParamsPresent;
+private Boolean allRequiredParamsPresent;
 private String fulfillmentText;
-private List<FulfillmentMessage> fulfillmentMessages = new ArrayList<FulfillmentMessage>();
+private List<FulfillmentMessage> fulfillmentMessages = null;
+private List<OutputContext> outputContexts = null;
 private Intent intent;
-
-
+private Integer intentDetectionConfidence;
 private DiagnosticInfo diagnosticInfo;
-private int intentDetectionConfidence;
 private String languageCode;
+private String action;
+
+
+public String getAction() {
+return action;
+}
+
+public void setAction(String action) {
+this.action = action;
+}
+
+
+
+
 
 public String getQueryText() {
 return queryText;
@@ -30,17 +39,6 @@ public void setQueryText(String queryText) {
 this.queryText = queryText;
 }
 
-
-public String getAction() {
-return action;
-}
-
-public void setAction(String action) {
-this.queryText = action;
-}
-
-
-
 public Parameters getParameters() {
 return parameters;
 }
@@ -49,16 +47,13 @@ public void setParameters(Parameters parameters) {
 this.parameters = parameters;
 }
 
-
-public boolean isAllRequiredParamsPresent() {
+public Boolean getAllRequiredParamsPresent() {
 return allRequiredParamsPresent;
 }
 
-public void setAllRequiredParamsPresent(boolean allRequiredParamsPresent) {
+public void setAllRequiredParamsPresent(Boolean allRequiredParamsPresent) {
 this.allRequiredParamsPresent = allRequiredParamsPresent;
 }
-
-
 
 public String getFulfillmentText() {
 return fulfillmentText;
@@ -68,8 +63,6 @@ public void setFulfillmentText(String fulfillmentText) {
 this.fulfillmentText = fulfillmentText;
 }
 
-
-
 public List<FulfillmentMessage> getFulfillmentMessages() {
 return fulfillmentMessages;
 }
@@ -78,6 +71,13 @@ public void setFulfillmentMessages(List<FulfillmentMessage> fulfillmentMessages)
 this.fulfillmentMessages = fulfillmentMessages;
 }
 
+public List<OutputContext> getOutputContexts() {
+return outputContexts;
+}
+
+public void setOutputContexts(List<OutputContext> outputContexts) {
+this.outputContexts = outputContexts;
+}
 
 public Intent getIntent() {
 return intent;
@@ -87,17 +87,21 @@ public void setIntent(Intent intent) {
 this.intent = intent;
 }
 
-
-
-public int getIntentDetectionConfidence() {
+public Integer getIntentDetectionConfidence() {
 return intentDetectionConfidence;
 }
 
-public void setIntentDetectionConfidence(int intentDetectionConfidence) {
+public void setIntentDetectionConfidence(Integer intentDetectionConfidence) {
 this.intentDetectionConfidence = intentDetectionConfidence;
 }
 
+public DiagnosticInfo getDiagnosticInfo() {
+return diagnosticInfo;
+}
 
+public void setDiagnosticInfo(DiagnosticInfo diagnosticInfo) {
+this.diagnosticInfo = diagnosticInfo;
+}
 
 public String getLanguageCode() {
 return languageCode;
@@ -105,16 +109,6 @@ return languageCode;
 
 public void setLanguageCode(String languageCode) {
 this.languageCode = languageCode;
-}
-
-@JsonIgnoreProperties
-public DiagnosticInfo getDiagnosticInfo() {
-return diagnosticInfo;
-}
-
-@JsonIgnoreProperties
-public void setDiagnosticInfo(DiagnosticInfo diagnosticInfo) {
-this.diagnosticInfo = diagnosticInfo;
 }
 
 }

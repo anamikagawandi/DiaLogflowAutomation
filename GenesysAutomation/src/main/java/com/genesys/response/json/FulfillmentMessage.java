@@ -1,7 +1,5 @@
 package com.genesys.response.json;
 
-import java.util.HashMap;
-import java.util.Map;
 public class FulfillmentMessage {
 
 private Text text;

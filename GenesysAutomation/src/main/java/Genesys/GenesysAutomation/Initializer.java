@@ -38,19 +38,4 @@ public class Initializer {
 		}
 	}
 
-	
-	public static void initialization()
-	{
-		
-		
-	
-	}
-	
-	
-	
-	public static void main (String arg[])
-	{
-		
-	}
-
 }

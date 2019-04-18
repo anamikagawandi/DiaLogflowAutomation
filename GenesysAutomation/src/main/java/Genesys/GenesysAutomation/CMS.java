@@ -31,7 +31,7 @@ public class CMS {
 		}
 		
 		
-		public CMSResponse getCMSResponse(String id)
+		public String getCMSResponseString(String id)
 		{
 			String cms_response=null;
 			
@@ -61,31 +61,34 @@ public class CMS {
 					e.printStackTrace();
 				}
 			
-			System.out.println(cms_response);
+			
+			
+			cms_response=cms_response.replaceAll("account_id","accountId");
+			cms_response=cms_response.replaceAll("is_published","isPublished");
+			cms_response=cms_response.replaceAll("language_id","languageId");
+			cms_response=cms_response.replaceAll("created_at","createdAt");
+			cms_response=cms_response.replaceAll("updated_at","updatedAt");
+			
+			return cms_response;
+		}
+		
+		
+		public CMSResponse getCMSResponse(String cms_response) throws JsonParseException,JsonMappingException,IOException
+		{
+			
+			//System.out.println("THis is new CMS"+cms_response);
 			
 			ObjectMapper res = new ObjectMapper();
 
-			try {
-				response = res.readValue(cms_response, CMSResponse.class);
-			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			
+			response = res.readValue(cms_response, CMSResponse.class);
+
 			return response;
 		}
 		
 		
 		
 		
-		
+	/*	
 		public static void main(String rgs[])
 		{
 			
@@ -94,6 +97,6 @@ public class CMS {
 				
 			i.getCMSResponse("376576");
 		}
-
+*/
 
 }

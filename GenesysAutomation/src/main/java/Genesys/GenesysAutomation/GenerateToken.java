@@ -52,14 +52,14 @@ public class GenerateToken {
 				e.printStackTrace();
 			}
 		
-		System.out.println(accessToken);
+		//System.out.println(accessToken);
 		
 		return accessToken;
 	}
 	
 	
 	
-	
+	/*
 	
 	public static void main(String rgs[])
 	{
@@ -68,5 +68,5 @@ public class GenerateToken {
 		
 		i.getToken("https://us-central1-kate-experience-19.cloudfunctions.net/getToken");
 	}
-
+*/
 }

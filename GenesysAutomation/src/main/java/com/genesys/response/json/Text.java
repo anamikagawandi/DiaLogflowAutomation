@@ -1,13 +1,11 @@
 package com.genesys.response.json;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 public class Text {
 
-private List<String> text = new ArrayList<String>();
+private List<String> text = null;
 
 public List<String> getText() {
 return text;
@@ -16,7 +14,5 @@ return text;
 public void setText(List<String> text) {
 this.text = text;
 }
-
-
 
 }

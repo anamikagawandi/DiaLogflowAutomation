@@ -15,7 +15,6 @@ public class Invoker {
 	
 	public static void main(String rgs[])
 	{
-		
 		CompareResult cr=new CompareResult();
 		cr.compareData();
 		
