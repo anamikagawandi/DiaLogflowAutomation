@@ -54,7 +54,7 @@ public class ChatScript {
 	}
 	
 		
-	public String[] getResponseString(String question)
+	public String[] getResponseString(String question,String api_uri)
 	{
 		restClient = new RestClient();
 		HashMap<String, String> headerMap = new HashMap<String, String>();
@@ -81,10 +81,10 @@ public class ChatScript {
 		
 		String[] responseString = new String[2];
 		
-		String api_uri=init.prop.getProperty("api_uri");
+		//String api_uri=init.prop.getProperty("api_uri");
 		
 		
-		api_uri=api_uri.replace("{id}","12345");
+		//api_uri=api_uri.replace("{id}","12345");
 		
 		//api_uri=changeSessionInApiUri(api_uri);
 		

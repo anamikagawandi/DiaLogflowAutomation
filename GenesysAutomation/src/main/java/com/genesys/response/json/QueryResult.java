@@ -13,7 +13,7 @@ private String fulfillmentText;
 private List<FulfillmentMessage> fulfillmentMessages = null;
 private List<OutputContext> outputContexts = null;
 private Intent intent;
-private Integer intentDetectionConfidence;
+private Double intentDetectionConfidence;
 private DiagnosticInfo diagnosticInfo;
 private String languageCode;
 private String action;
@@ -87,11 +87,11 @@ public void setIntent(Intent intent) {
 this.intent = intent;
 }
 
-public Integer getIntentDetectionConfidence() {
+public Double getIntentDetectionConfidence() {
 return intentDetectionConfidence;
 }
 
-public void setIntentDetectionConfidence(Integer intentDetectionConfidence) {
+public void setIntentDetectionConfidence(Double intentDetectionConfidence) {
 this.intentDetectionConfidence = intentDetectionConfidence;
 }
 

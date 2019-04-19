@@ -138,9 +138,7 @@ public class CompareResult {
 
 	}
 
-
-
-
+	
 	public void compareData()
 	{
 
@@ -171,8 +169,7 @@ public class CompareResult {
 				sheet.getRow(i).getCell(14).setCellValue("");
 				sheet.getRow(i).getCell(15).setCellValue("");
 				sheet.getRow(i).getCell(17).setCellValue("");
-
-
+				sheet.getRow(i).getCell(18).setCellValue("");
 
 
 				String question=sheet.getRow(i).getCell(1).getStringCellValue().trim();
@@ -200,7 +197,13 @@ public class CompareResult {
 				test=extent.createTest(question);
 				
 				
-				df_json_response=chat.getResponseString(question);
+				df_json_response=chat.getResponseString(question,
+						init.prop.getProperty("api_uri").replace("{id}",
+								Integer.toString((int) sheet.getRow(i).getCell(0).getNumericCellValue()).trim()));
+				
+				
+				
+				
 				//System.out.println("This is th response"+  df_json_response );	
 				response_df=chat.runChatScript(df_json_response[1]);
 
@@ -225,6 +228,8 @@ public class CompareResult {
 					default_ans.add("What was that?");
 					default_ans.add("Say that one more time?");
 					default_ans.add("I didn't get that. Can you repeat?");
+					default_ans.add("I missed that, say that again?");
+					default_ans.add("Connect to live agent.");
 
 
 
@@ -245,7 +250,43 @@ public class CompareResult {
 					}
 
 					
-					sheet.getRow(i).getCell(13).setCellValue("Default Fallback Intent");
+					//to add values of entities from df
+					if(!response_df.getQueryResult().getParameters().getWhat().trim().isEmpty())
+					{
+						entity_att="what";
+						entity_value=response_df.getQueryResult().getParameters().getWhat().trim();
+					}
+					else if(!response_df.getQueryResult().getParameters().getWhen().trim().isEmpty())
+					{
+						entity_att="when";
+						entity_value=response_df.getQueryResult().getParameters().getWhen().trim();
+					}
+					else if(!response_df.getQueryResult().getParameters().getWhere().trim().isEmpty())
+					{
+						entity_att="where";
+						entity_value=response_df.getQueryResult().getParameters().getWhere().trim();
+					}
+					else if(!response_df.getQueryResult().getParameters().getWho().trim().isEmpty())
+					{
+						entity_att="who";
+						entity_value=response_df.getQueryResult().getParameters().getWho().trim();
+					}
+					else if(!response_df.getQueryResult().getParameters().getItem().trim().isEmpty())
+					{
+						entity_att="item";
+						entity_value=response_df.getQueryResult().getParameters().getItem().trim();
+					}
+					else if(!response_df.getQueryResult().getParameters().getTopic().trim().isEmpty())
+					{
+						entity_att="topic";
+						entity_value=response_df.getQueryResult().getParameters().getTopic().trim();
+					}
+					
+					
+					
+					sheet.getRow(i).getCell(7).setCellValue(entity_att);
+					sheet.getRow(i).getCell(8).setCellValue(entity_value);
+					//sheet.getRow(i).getCell(13).setCellValue("Default Fallback Intent");
 					sheet.getRow(i).getCell(2).setCellValue("Default Fallback Intent");
 					
 					System.out.println("Question asked:\t"+question);
@@ -371,22 +412,26 @@ public class CompareResult {
 					System.out.println("Entity Value actual :\t"+entity_value);
 					System.out.println("Context Value expected :\t"+sheet_context);
 					System.out.println("Context Value actual :\t"+df_context);
-
-					sheet.getRow(i).getCell(13).setCellValue(cms_json_response);
+					System.out.println("Intent Detection Confidence :\t"+response_df.getQueryResult().getIntentDetectionConfidence().doubleValue());
 					
+					sheet.getRow(i).getCell(7).setCellValue(entity_att);
+					sheet.getRow(i).getCell(8).setCellValue(entity_value);
+					sheet.getRow(i).getCell(13).setCellValue(cms_json_response);
+					sheet.getRow(i).getCell(2).setCellValue(sheet_intent.toString());
 					
 				}
 
+				System.out.println("Intent Detection Confidence :\t"+response_df.getQueryResult().getIntentDetectionConfidence().doubleValue());
+				
 				sheet.getRow(i).getCell(5).setCellValue(cms_answer);
 				sheet.getRow(i).getCell(6).setCellValue(intent);
-				sheet.getRow(i).getCell(7).setCellValue(entity_att);
-				sheet.getRow(i).getCell(8).setCellValue(entity_value);
+				
 				sheet.getRow(i).getCell(9).setCellValue(ans);
 				sheet.getRow(i).getCell(12).setCellValue(df_json_response[1]);
 				
-				sheet.getRow(i).getCell(2).setCellValue(sheet_intent.toString());
+				
 				sheet.getRow(i).getCell(17).setCellValue(df_context);
-				sheet.getRow(i).getCell(17).setCellValue(response_df.getQueryResult().getIntentDetectionConfidence());
+				sheet.getRow(i).getCell(18).setCellValue(response_df.getQueryResult().getIntentDetectionConfidence().doubleValue());
 
 
 				Date date = Calendar.getInstance().getTime();  
@@ -398,8 +443,6 @@ public class CompareResult {
 				sheet.getRow(i).getCell(15).setCellValue(df_json_response[0]);
 
 
-				
-				//	}
 
 			}
 
