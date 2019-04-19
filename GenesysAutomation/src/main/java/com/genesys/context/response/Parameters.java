@@ -2,23 +2,23 @@ package com.genesys.context.response;
 
 public class Parameters {
 
-private String entity="";
-private String whenOriginal="";
-private String when="";
-private String whatOriginal="";
-private String what="";
-private String whereOriginal="";
-private String where="";
-private String whoOriginal="";
-private String who="";
-private String itemOriginal="";
-private String item="";
-private String devconOriginal="";
-private String devcon="";
-private String nextOriginal="";
-private String next="";
-private String topicOriginal="";
-private String topic="";
+private String entity=" ";
+private String whenOriginal=" ";
+private String when=" ";
+private String whatOriginal=" ";
+private String what=" ";
+private String whereOriginal=" ";
+private String where=" ";
+private String whoOriginal=" ";
+private String who=" ";
+private String itemOriginal=" ";
+private String item=" ";
+private String devconOriginal=" ";
+private String devcon=" ";
+private String nextOriginal=" ";
+private String next=" ";
+private String topicOriginal=" ";
+private String topic=" ";
 
 public String getEntity() {
 return entity;

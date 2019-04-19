@@ -386,6 +386,7 @@ public class CompareResult {
 				
 				sheet.getRow(i).getCell(2).setCellValue(sheet_intent.toString());
 				sheet.getRow(i).getCell(17).setCellValue(df_context);
+				sheet.getRow(i).getCell(17).setCellValue(response_df.getQueryResult().getIntentDetectionConfidence());
 
 
 				Date date = Calendar.getInstance().getTime();  
