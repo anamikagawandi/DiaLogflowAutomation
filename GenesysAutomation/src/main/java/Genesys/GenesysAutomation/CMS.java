@@ -87,16 +87,20 @@ public class CMS {
 		
 		
 		
-		
-	/*	
+	/*
 		public static void main(String rgs[])
 		{
 			
 			CMS i=new CMS();
 			
 				
-			i.getCMSResponse("376576");
+			try {
+				System.out.println(i.getCMSResponse(i.getCMSResponseString("379490")).getAnswer());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-*/
 
+*/
 }

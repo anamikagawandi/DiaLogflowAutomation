@@ -57,9 +57,7 @@ public class ChatScript {
 	public String[] getResponseString(String question,String api_uri)
 	{
 		restClient = new RestClient();
-		HashMap<String, String> headerMap = new HashMap<String, String>();
-		headerMap.put("Content-Type", "application/json");
-		headerMap.put("Authorization", "Bearer "+genTok.getToken(init.prop.getProperty("token_url")).trim());
+		
 		
 		//jackson API:
 		ObjectMapper req = new ObjectMapper();
@@ -87,6 +85,11 @@ public class ChatScript {
 		//api_uri=api_uri.replace("{id}","12345");
 		
 		//api_uri=changeSessionInApiUri(api_uri);
+		
+		HashMap<String, String> headerMap = new HashMap<String, String>();
+		headerMap.put("Content-Type", "application/json");
+		//headerMap.put("Authorization", "Bearer "+genTok.getToken(init.prop.getProperty("token_url")).trim());
+		headerMap.put("Authorization", "Bearer "+genTok.getTokenForDev().trim());
 		
 		
 		try {
@@ -130,6 +133,9 @@ public class ChatScript {
 		responsestr=responsestr.replaceAll("devcon.original","devconOriginal");
 		responsestr=responsestr.replaceAll("next.original","nextOriginal");
 		responsestr=responsestr.replaceAll("topic.original","topicOriginal");
+		responsestr=responsestr.replaceAll("directions.original","directionsOriginal");
+		responsestr=responsestr.replaceAll("general.original","generalOriginal");
+		
 		
 		
 		responseString[1]=responsestr;

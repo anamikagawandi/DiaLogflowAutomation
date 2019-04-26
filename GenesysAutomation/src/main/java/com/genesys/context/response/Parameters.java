@@ -19,6 +19,10 @@ private String nextOriginal=" ";
 private String next=" ";
 private String topicOriginal=" ";
 private String topic=" ";
+private String directionsOriginal=" ";
+private String directions=" ";
+private String generalOriginal=" ";
+private String general=" ";
 
 public String getEntity() {
 return entity;
@@ -155,5 +159,57 @@ return topic;
 public void setTopic(String topic) {
 this.topic = topic;
 }
+
+
+
+
+
+
+
+public String getDirectionsOriginal() {
+return directionsOriginal;
+}
+
+public void setDirectionsOriginal(String directionsOriginal) {
+this.directionsOriginal = directionsOriginal;
+}
+
+public String getDirections() {
+return directions;
+}
+
+public void setDirections(String directions) {
+this.directions = directions;
+}
+
+
+
+
+
+
+
+
+public String getGeneralOriginal() {
+return generalOriginal;
+}
+
+public void setTGeneralOriginal(String generalOriginal) {
+this.generalOriginal = topicOriginal;
+}
+
+public String getGeneral() {
+return general;
+}
+
+public void setGeneral(String general) {
+this.general = general;
+}
+
+
+
+
+
+
+
 
 }

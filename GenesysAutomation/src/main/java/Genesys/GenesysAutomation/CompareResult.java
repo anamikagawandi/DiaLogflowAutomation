@@ -217,25 +217,25 @@ public class CompareResult {
 				{
 					System.out.println("Inside CMS id null block");
 					ArrayList<String> default_ans=new ArrayList<String>();
-					default_ans.add("I didn't get that. Can you say it again?");
-					default_ans.add("I missed what you said. What was that?");
-					default_ans.add("Sorry, could you say that again?");
-					default_ans.add("Sorry, can you say that again?");
-					default_ans.add("Can you say that again?");
-					default_ans.add("Sorry, I didn't get that. Can you rephrase?");
-					default_ans.add("Sorry, what was that?");
-					default_ans.add("One more time?");
-					default_ans.add("What was that?");
-					default_ans.add("Say that one more time?");
-					default_ans.add("I didn't get that. Can you repeat?");
-					default_ans.add("I missed that, say that again?");
+					//default_ans.add("I didn't get that. Can you say it again?");
+					//default_ans.add("I missed what you said. What was that?");
+					//default_ans.add("Sorry, could you say that again?");
+					////default_ans.add("Sorry, can you say that again?");
+					//default_ans.add("Can you say that again?");
+					//default_ans.add("Sorry, I didn't get that. Can you rephrase?");
+					//default_ans.add("Sorry, what was that?");
+					//default_ans.add("One more time?");
+					//default_ans.add("What was that?");
+					//default_ans.add("Say that one more time?");
+					////default_ans.add("I didn't get that. Can you repeat?");
+					//default_ans.add("I missed that, say that again?");
 					default_ans.add("Connect to live agent.");
 
 
 
 					ans=response_df.getQueryResult().getFulfillmentText().trim();
 
-					if(default_ans.contains(ans) && intent.equalsIgnoreCase("Default Fallback Intent".trim()))
+					if(default_ans.contains(ans) && (intent.equalsIgnoreCase("Default Fallback Intent".trim()) || intent.equalsIgnoreCase("1.connectToLiveAgent".trim())))
 					{
 						sheet.getRow(i).getCell(11).setCellValue("PASS");
 						test.log(Status.PASS,"");
@@ -281,13 +281,23 @@ public class CompareResult {
 						entity_att="topic";
 						entity_value=response_df.getQueryResult().getParameters().getTopic().trim();
 					}
+					else if(!response_df.getQueryResult().getParameters().getDirections().trim().isEmpty())
+					{
+						entity_att="directions";
+						entity_value=response_df.getQueryResult().getParameters().getDirections().trim();
+					}
+					else if(!response_df.getQueryResult().getParameters().getGeneral().trim().isEmpty())
+					{
+						entity_att="general";
+						entity_value=response_df.getQueryResult().getParameters().getGeneral().trim();
+					}
 					
 					
 					
 					sheet.getRow(i).getCell(7).setCellValue(entity_att);
 					sheet.getRow(i).getCell(8).setCellValue(entity_value);
-					//sheet.getRow(i).getCell(13).setCellValue("Default Fallback Intent");
-					sheet.getRow(i).getCell(2).setCellValue("Default Fallback Intent");
+					sheet.getRow(i).getCell(5).setCellValue(ans);
+					//sheet.getRow(i).getCell(2).setCellValue("Default Fallback Intent");
 					
 					System.out.println("Question asked:\t"+question);
 					System.out.println("Answer by DF :\t"+ans);
@@ -300,10 +310,12 @@ public class CompareResult {
 					try{
 
 						cms_json_response=cms.getCMSResponseString(cms_id.trim());
-
+						System.out.println(cms_json_response);
 						try {
 							cms_answer=cms.getCMSResponse(cms_json_response).getAnswer().trim();
+							System.out.println(cms_answer);
 						} catch (Exception e) {
+							//e.printStackTrace();
 							sheet.getRow(i).getCell(13).setCellValue(e.getMessage());
 						}
 
@@ -360,16 +372,26 @@ public class CompareResult {
 							entity_att="topic";
 							entity_value=response_df.getQueryResult().getParameters().getTopic().trim();
 						}
-
+						else if(!response_df.getQueryResult().getParameters().getDirections().trim().isEmpty())
+						{
+							entity_att="directions";
+							entity_value=response_df.getQueryResult().getParameters().getDirections().trim();
+						}
+						else if(!response_df.getQueryResult().getParameters().getGeneral().trim().isEmpty())
+						{
+							entity_att="general";
+							entity_value=response_df.getQueryResult().getParameters().getGeneral().trim();
+						}
+						
 
 
 						try {
-							if(cms_answer.isEmpty())
-								cms_answer="blank answer from cms";
+							if(cms_answer.trim().isEmpty())
+								cms_answer="Blank answer from CMS";
 						}
 						catch(Exception e)
 						{
-							cms_answer="error to fetch from cms";
+							cms_answer="Error to fetch from CMS";
 						}
 
 						if(ans.equalsIgnoreCase(cms_answer) &&
@@ -417,7 +439,7 @@ public class CompareResult {
 					sheet.getRow(i).getCell(7).setCellValue(entity_att);
 					sheet.getRow(i).getCell(8).setCellValue(entity_value);
 					sheet.getRow(i).getCell(13).setCellValue(cms_json_response);
-					sheet.getRow(i).getCell(2).setCellValue(sheet_intent.toString());
+					//sheet.getRow(i).getCell(2).setCellValue(sheet_intent.toString());
 					
 				}
 

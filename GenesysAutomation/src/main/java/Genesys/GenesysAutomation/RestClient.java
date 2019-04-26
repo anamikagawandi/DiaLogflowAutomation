@@ -9,13 +9,23 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
+import org.apache.http.HttpResponse;
+import org.apache.http.ParseException;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 public class RestClient extends Initializer {
 
@@ -46,13 +56,16 @@ public class RestClient extends Initializer {
 		for(Map.Entry<String,String> entry : headerMap.entrySet()){
 			httpget.addHeader(entry.getKey(), entry.getValue());
 		}
+		
+		
+		
 		CloseableHttpResponse closebaleHttpResponse =  httpClient.execute(httpget); //hit the GET URL
 		return closebaleHttpResponse;
 			
 		}
 	
 		
-	
+		
 		
 		public CloseableHttpResponse postForAccessCode(String url, String entityString, HashMap<String, String> headerMap) throws ClientProtocolException, IOException{
 			CloseableHttpClient httpClient = HttpClients.createDefault();

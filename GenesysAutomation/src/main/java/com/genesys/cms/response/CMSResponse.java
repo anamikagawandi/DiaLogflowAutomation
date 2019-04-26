@@ -16,7 +16,7 @@ private Integer languageId;
 private Integer position;
 private String createdAt;
 private String updatedAt;
-private String answer;
+private String answer=" ";
 
 public Integer getId() {
 return id;

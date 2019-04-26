@@ -9,7 +9,7 @@ public class QueryResult {
 private String queryText;
 private Parameters parameters;
 private Boolean allRequiredParamsPresent;
-private String fulfillmentText;
+private String fulfillmentText=" ";
 private List<FulfillmentMessage> fulfillmentMessages = null;
 private List<OutputContext> outputContexts = null;
 private Intent intent;
