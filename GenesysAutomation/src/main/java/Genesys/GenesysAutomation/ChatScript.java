@@ -14,7 +14,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.util.EntityUtils;
 import org.apache.log4j.Logger;
 
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -153,6 +154,7 @@ public class ChatScript {
 		
 		
 		ObjectMapper res = new ObjectMapper();
+		res.setVisibility(PropertyAccessor.FIELD, Visibility.ANY);
 
 		try {
 			response = res.readValue(responseString, ResponseJson.class);
@@ -182,16 +184,21 @@ public class ChatScript {
 	public static void main(String arg[])
 	{
 		ChatScript c=new ChatScript();
+		Initializer init=new Initializer();
 		ObjectMapper mapper = new ObjectMapper();
 		//System.out.println(c.runChatScript(c.getResponseString("Is there a shuttle to the Westin?")).getQueryResult().getDiagnosticInfo().getWebhookLatencyMs());
-		ResponseJson response_df=c.runChatScript(c.getResponseString("When is the keynote speaker presenting?")[1]);
-		
+		ResponseJson response_df=c.runChatScript(c.getResponseString("Where can I go to find my missing / lost badge?",init.prop.getProperty("api_uri").replace("{id}","1234"))[1]);
+		System.out.println(response_df.getQueryResult().getFulfillmentText());
+		System.out.println(response_df.getQueryResult().getParameters().getWhere());
+		System.out.println(response_df.getQueryResult().getIntent().getDisplayName());
+		//System.out.println(response_df.getQueryResult().getOutputContexts().get(0).getParameters().getWhere());
+		//System.out.println(response_df.getQueryResult().getFulfillmentText());
 		try {
 			System.out.println(mapper.writeValueAsString(response_df));
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
-	*/
+	}*/
+	
 }

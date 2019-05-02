@@ -17,7 +17,7 @@ private Double intentDetectionConfidence;
 private DiagnosticInfo diagnosticInfo;
 private String languageCode;
 private String action;
-
+private SentimentAnalysisResult sentimentAnalysisResult;
 
 public String getAction() {
 return action;
@@ -110,5 +110,15 @@ return languageCode;
 public void setLanguageCode(String languageCode) {
 this.languageCode = languageCode;
 }
+
+
+public SentimentAnalysisResult getSentimentAnalysisResult() {
+return sentimentAnalysisResult;
+}
+
+public void setSentimentAnalysisResult(SentimentAnalysisResult sentimentAnalysisResult) {
+this.sentimentAnalysisResult = sentimentAnalysisResult;
+}
+
 
 }

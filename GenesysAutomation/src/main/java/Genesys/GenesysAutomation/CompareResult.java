@@ -449,7 +449,8 @@ public class CompareResult {
 				sheet.getRow(i).getCell(6).setCellValue(intent);
 				
 				sheet.getRow(i).getCell(9).setCellValue(ans);
-				sheet.getRow(i).getCell(12).setCellValue(df_json_response[1]);
+				if(df_json_response[1].length()<32767)
+					sheet.getRow(i).getCell(12).setCellValue(df_json_response[1]);
 				
 				
 				sheet.getRow(i).getCell(17).setCellValue(df_context);
@@ -468,6 +469,16 @@ public class CompareResult {
 
 			}
 
+			
+			//driver.quit();
+
+		}catch(
+				Exception e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
 			try {
 				file.close();
 				outputStream = new FileOutputStream(file_name);
@@ -480,12 +491,6 @@ public class CompareResult {
 			{
 				e.printStackTrace();
 			}
-			//driver.quit();
-
-		}catch(
-				Exception e)
-		{
-			e.printStackTrace();
 		}
 
 
